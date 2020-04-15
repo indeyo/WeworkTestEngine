@@ -15,4 +15,13 @@ class TestDepartment:
         self.department.get_token()
 
     def test_list(self):
-        assert self.department.list()["errcode"] == 0
+        resp = self.department.list()
+        assert resp["errcode"] == 0
+
+    def test_create(self):
+        department_name = "333"
+        assert self.department.create(department_name, 1)["errcode"] == 0
+        names = []
+        for item in self.department.list()["department"]:
+            names.append(item["name"])
+        assert department_name in "|".join(names)
