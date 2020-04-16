@@ -7,6 +7,7 @@
 @Author  : indeyo_lin
 """
 import json
+from pprint import pprint
 
 import requests
 
@@ -31,8 +32,13 @@ class Department(BaseApi):
             proxies=proxies,
             verify=False
         )
+        # 只对r.text起作用，对r.json()没用
         r.encoding = "utf-8"
-        self.format(r.json())
+        # print(r.text)
+        # print(type(json.loads(r.text)))
+        # text是字符串类型，无法使用json格式化的方法
+        # print(type(r.text))
+        self.format(json.loads(r.text))
         return r.json()
 
     def create(self, name, parentid, **kwargs):

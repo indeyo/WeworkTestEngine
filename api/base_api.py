@@ -11,4 +11,5 @@ import json
 
 class BaseApi:
     def format(self, data):
-        print(json.dumps(data, indent=2))
+        # 默认是ASCII编码，设置成False可以打印中文
+        print(json.dumps(data, indent=2, ensure_ascii=False))
