@@ -32,10 +32,11 @@ class Department(BaseApi):
         r = requests.get(
             "https://qyapi.weixin.qq.com/cgi-bin/department/list",
             params={"access_token": self._access_token},
-            headers={"content-type": "application/json; charset=utf-8"},
+            headers={"content-type": "application/json; charset=UTF-8"},
             proxies=proxies,
             verify=False
         )
+        r.encoding = "UTF-8"
         self.format(r.json())
         return r.json()
 
@@ -43,6 +44,8 @@ class Department(BaseApi):
         r = requests.post(
             "https://qyapi.weixin.qq.com/cgi-bin/department/create",
             params={"access_token": self._access_token},
+            # 这里用data会报错：60001，Warning: wrong json format. department invalid length
+            # todo:data和json有何区别？
             json={
                 "name": name,
                 "parentid": parentid
@@ -58,8 +61,38 @@ class Department(BaseApi):
         self.format(r.json())
         return r.json()
 
-    def update(self):
-        pass
+    def update(self, id, **kwargs):
+        data = {"id": id}
+        data.update(kwargs)
+        r = requests.post(
+            "https://qyapi.weixin.qq.com/cgi-bin/department/update",
+            params={"access_token": self._access_token},
+            json=data,
+            headers={"content-type": "application/json; charset=UTF-8"},
+            proxies=proxies,
+            verify=False
+        )
+        r.encoding = "utf-8"
+        self.format(r.json())
+        return r.json()
 
-    def delete(self):
-        pass
+    def delete(self, id):
+        r = requests.get(
+            "https://qyapi.weixin.qq.com/cgi-bin/department/delete",
+            params={
+                "access_token": self._access_token,
+                "id": id
+            },
+            headers={"content-type": "application/json; charset=UTF-8"},
+            proxies=proxies,
+            verify=False
+        )
+        self.format(r.json())
+        return r.json()
+
+    def get_departments_by_attribute(self, attribute):
+        """获取部门的id或者name数组格式，用于断言"""
+        list = []
+        for item in self.list()["department"]:
+            list.append(item[attribute])
+        return list
