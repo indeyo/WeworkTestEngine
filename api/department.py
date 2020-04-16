@@ -21,38 +21,36 @@ proxies = {
 
 class Department(BaseApi):
     _secret = "-tzpw8mha37Q7pDSfu22XbLg9EQ38Kx9Dr9aBsX94VU"
-    _access_token = None
-
-    def get_token(self):
-        if self._access_token is None:
-            self._access_token = WeWork.get_access_token(self._secret)
-        # self._access_token = self.get_access_token(self._secret)
 
     def list(self):
         r = requests.get(
             "https://qyapi.weixin.qq.com/cgi-bin/department/list",
-            params={"access_token": self._access_token},
-            headers={"content-type": "application/json; charset=UTF-8"},
+            params={"access_token": WeWork.get_token(self._secret)},
+            # headers={"content-type": "application/json; charset=UTF-8"},
+            headers={"content-type": "charset=utf-8"},
             proxies=proxies,
             verify=False
         )
-        r.encoding = "UTF-8"
+        r.encoding = "utf-8"
         self.format(r.json())
         return r.json()
 
-    def create(self, name, parentid, name_en="", order="", id=""):
+    def create(self, name, parentid, **kwargs):
+        data = {
+            "name": name,
+            "parentid": parentid
+        }
+        data.update(kwargs)
         r = requests.post(
             "https://qyapi.weixin.qq.com/cgi-bin/department/create",
-            params={"access_token": self._access_token},
+            params={"access_token": WeWork.get_token(self._secret)},
             # 这里用data会报错：60001，Warning: wrong json format. department invalid length
-            # todo:data和json有何区别？
-            json={
-                "name": name,
-                "parentid": parentid
-                # "name_en": name_en,
-                # "order": order,
-                # "id": id
-            },
+            # done: data和json有何区别？
+            # 可抓包看数据
+            # 用json表示，请求体body用json格式发送，{"name": "dont give up", "parentid": 1}
+            # 用data表示，请求体body用赋值的格式传递，name=dont+give+up&parentid=1
+            json=data,
+            # data=data,
             headers={"content-type": "application/json; charset=utf-8"},
             # headers={"Accept-Encoding": "charset=utf8"},
             proxies=proxies,
@@ -66,7 +64,7 @@ class Department(BaseApi):
         data.update(kwargs)
         r = requests.post(
             "https://qyapi.weixin.qq.com/cgi-bin/department/update",
-            params={"access_token": self._access_token},
+            params={"access_token": WeWork.get_token(self._secret)},
             json=data,
             headers={"content-type": "application/json; charset=UTF-8"},
             proxies=proxies,
@@ -80,7 +78,7 @@ class Department(BaseApi):
         r = requests.get(
             "https://qyapi.weixin.qq.com/cgi-bin/department/delete",
             params={
-                "access_token": self._access_token,
+                "access_token": WeWork.get_token(self._secret),
                 "id": id
             },
             headers={"content-type": "application/json; charset=UTF-8"},

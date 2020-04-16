@@ -20,8 +20,15 @@ proxies = {
 
 class WeWork(BaseApi):
     _corpid = "ww84f2624b18176321"
+    _token = {}
 
-    # todo:需要保存token，不用每次调用都去请求
+    @classmethod
+    def get_token(cls, secret):
+        # done: 需要保存token，不用每次调用都去请求
+        if secret not in cls._token.keys():
+            cls._token[secret] = cls.get_access_token(secret)
+        cls.format("", cls._token)
+        return cls._token[secret]
 
     # 类函数，直接通过类调用，不需要创建对象
     @classmethod
@@ -35,8 +42,9 @@ class WeWork(BaseApi):
             proxies=proxies,
             verify=False
         )
+        # 类方法调用父类实例方法报错，前面随便加个值字可以通过
         # todo:待排查：TypeError: format() missing 1 required positional argument: 'data'
-        # 非类函数可以正常调用
+        # 实例方法可以正常调用
         # cls.format(r.json())
         return r.json()["access_token"]
 
