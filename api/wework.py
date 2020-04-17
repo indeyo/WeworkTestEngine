@@ -42,10 +42,12 @@ class WeWork(BaseApi):
             proxies=proxies,
             verify=False
         )
-        # 类方法调用父类实例方法报错，前面随便加个值字可以通过
-        # todo:待排查：TypeError: format() missing 1 required positional argument: 'data'
-        # 实例方法可以正常调用
-        # cls.format(r.json())
+        # done: 类方法调用父类实例方法报错：TypeError: format() missing 1 required positional argument: 'data'
+        # 因为类方法Python解释器只会绑定类对象，不会绑定实例对象，所以无法隐式调用（不带self）实例方法
+        # 类方法只能显式调用实例方法，传入类实例对象，或者前面随便加个值也是可以通过的
+        # 如果format也定义成classmethod，则可以正常调用
+        # 实例方法调用类方法可以正常调用，不建议这样做
+        cls.format("", r.json())
         return r.json()["access_token"]
 
     def request(self, method, url, **kwargs):

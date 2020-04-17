@@ -38,7 +38,7 @@ class Department(BaseApi):
         # print(type(json.loads(r.text)))
         # text是字符串类型，无法使用json格式化的方法
         # print(type(r.text))
-        self.format(json.loads(r.text))
+        self.format(r.json())
         return r.json()
 
     def create(self, name, parentid, **kwargs):

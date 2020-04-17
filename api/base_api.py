@@ -10,6 +10,7 @@ import json
 
 
 class BaseApi:
+    # @classmethod
     def format(self, data):
         # 默认是ASCII编码，设置成False可以打印中文
         print(json.dumps(data, indent=2, ensure_ascii=False))

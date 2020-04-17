@@ -11,8 +11,10 @@ from api.wework import WeWork
 
 class TestBaseApi:
     def setup(self):
-        self.base = WeWork()
+        self.secret = "W1a-_z8wERVJRacyrzhuf5W4vHqBTkd2ghvTwAfivwI"
 
     def test_get_access_token(self):
-        secret = "W1a-_z8wERVJRacyrzhuf5W4vHqBTkd2ghvTwAfivwI"
-        assert self.base.get_token(secret) != ""
+        assert WeWork.get_access_token(self.secret) != ""
+
+    def test_get_token(self):
+        assert WeWork.get_token(self.secret) != ""
